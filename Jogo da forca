@@ -1,0 +1,164 @@
+import random
+
+# Palavras separadas por temas
+temas = {
+    "tecnologia": [
+        "python",
+        "programacao",
+        "algoritmo",
+        "internet",
+        "software"
+    ],
+
+    "jogos": [
+        "minecraft",
+        "valorant",
+        "zelda",
+        "mario",
+        "outlast"
+    ],
+
+    "escola": [
+        "caderno",
+        "refertorio",
+        "matematica",
+        "historia",
+        "filosofia"
+    ]
+}
+
+def escolher_palavra():
+    """Escolhe tema e palavra aleatória."""
+    
+    print("=" * 40)
+    print("BEM VINDO AO JOGO")
+    print("=" * 40)
+
+    for tema in temas:
+        print("-", tema)
+
+    print()
+
+    tema_escolhido = input("Escolha um tema mostrado acima: ").lower()
+
+    # Caso o jogador digite um tema inválido
+    if tema_escolhido not in temas:
+        print("Tema inválido! O tema tecnologia foi escolhido automaticamente.")
+        tema_escolhido = "tecnologia"
+
+    palavra = random.choice(temas[tema_escolhido])
+
+    return palavra, tema_escolhido
+
+def mostrar_palavra(palavra, letras_acertadas):
+    """Mostra a palavra escondida."""
+    
+    resultado = ""
+
+    for letra in palavra:
+        if letra in letras_acertadas:
+            resultado += letra + " "
+        else:
+            resultado += "_ "
+
+    return resultado
+
+def jogar():
+
+    palavra_secreta, tema = escolher_palavra()
+
+    letras_acertadas = []
+    letras_tentadas = []
+
+    vidas = 6
+    pontos = 0
+
+    print()
+    print("=" * 40)
+    print("        JOGO DA FORCA")
+    print("=" * 40)
+
+    print("Tema:", tema)
+    print("Você possui", vidas, "vidas.")
+    print()
+
+    while vidas > 0:
+
+        print("Palavra:", mostrar_palavra(palavra_secreta, letras_acertadas))
+        print("Tentativas:", letras_tentadas)
+        print("Vidas:", vidas)
+        print("Pontos:", pontos)
+
+        print("-" * 40)
+
+        letra = input("Digite uma letra: ").lower()
+
+        # Validações
+        if len(letra) != 1:
+            print("Digite apenas UMA letra.\n")
+            continue
+
+        if not letra.isalpha():
+            print("Digite apenas letras.\n")
+            continue
+
+        if letra in letras_tentadas:
+            print("Você já tentou essa letra, digite outra.\n")
+            continue
+
+        letras_tentadas.append(letra)
+
+        # Acertou
+        if letra in palavra_secreta:
+            print("AE! Você acertou uma letra.")
+            letras_acertadas.append(letra)
+            pontos += 5
+
+        # Errou
+        else:
+            print("Ops! Letra errada, tente de novo.")
+            vidas -= 1
+            pontos -= 3
+
+        print()
+
+        # Verifica vitória
+        venceu = True
+
+        for letra_palavra in palavra_secreta:
+            if letra_palavra not in letras_acertadas:
+                venceu = False
+
+        if venceu:
+
+            # Bônus por vitória perfeita
+            if vidas == 6:
+                pontos += 50
+                print("BÔNUS: Vitória perfeita +50 pontos!")
+
+            print("=" * 40)
+            print("PARABÉNS! VOCÊ GANHOU!")
+            print("Palavra:", palavra_secreta)
+            print("Pontuação final:", pontos)
+            print("=" * 40)
+
+            break
+
+    # Derrota
+    if vidas == 0:
+        print("=" * 40)
+        print("FIM DE JOGO!")
+        print("A palavra era:", palavra_secreta)
+        print("Pontuação final:", pontos)
+        print("=" * 40)
+
+# Loop para jogar novamente
+while True:
+
+    jogar()
+
+    resposta = input("Deseja jogar novamente? (s/n): ").lower()
+
+    if resposta != "s":
+        print("Obrigado por jogar!")
+        break
